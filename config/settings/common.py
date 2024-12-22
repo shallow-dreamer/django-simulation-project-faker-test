@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'apps.core.middleware.PerformanceMonitorMiddleware',
 ]
 
-ROOT_URLCONF = 'si_tools_test.urls'
+ROOT_URLCONF = 'test.urls'
 
 TEMPLATES = [
     {

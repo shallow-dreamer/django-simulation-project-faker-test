@@ -1,5 +1,5 @@
 """
-ASGI config for si_tools_test project.
+ASGI config for test project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
