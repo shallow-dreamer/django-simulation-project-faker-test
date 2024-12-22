@@ -1,101 +1,73 @@
+"""
+Django通用设置文件
+
+设计考虑：
+1. 提供所有环境共享的基础配置
+2. 包含安全相关的基本设置
+3. 配置数据库和缓存连接
+4. 设置文件处理和存储选项
+"""
+
 import os
-import sys
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# 构建路径
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# 将 apps 目录添加到 Python 路径
-APPS_DIR = BASE_DIR / 'apps'
-sys.path.insert(0, str(APPS_DIR))
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-qwk1=zhn*9*9g*@vrcsjlsoze3mjent73$i0s6l4-!7jcbh$a-'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+# 安全设置
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+DEBUG = False
 ALLOWED_HOSTS = []
 
-# Application definition
-INSTALLED_APPS = [
-    # Django apps
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    
-    # Third party apps
-    'rest_framework',
-    'drf_spectacular',
-    'corsheaders',
-    
-    # Local apps
-    'apps.core',
-    'apps.file_management',
-    'apps.parameter_processing',
-    'apps.com_simulation',
-]
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.core.middleware.PerformanceMonitorMiddleware',
-]
-
-ROOT_URLCONF = 'test.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = 'config.wsgi.application'
-
-# Database
+# 数据库配置
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+# 文件存储配置
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
 
-# Storage settings
-DEFAULT_STORAGE_TYPE = 'local'
+# Celery配置
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
-STORAGE_CONFIG = {
-    'local': {
-        'base_path': os.path.join(BASE_DIR, 'media'),
-    },
-    's3': {
-        'aws_access_key_id': os.environ.get('AWS_ACCESS_KEY_ID'),
-        'aws_secret_access_key': os.environ.get('AWS_SECRET_ACCESS_KEY'),
-        'region_name': os.environ.get('AWS_REGION', 'us-east-1'),
-        'bucket_name': os.environ.get('AWS_STORAGE_BUCKET_NAME'),
+# 缓存配置
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ.get('REDIS_URL', 'redis://localhost:6379/1'),
     }
+}
+
+# 日志配置
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
 } 
