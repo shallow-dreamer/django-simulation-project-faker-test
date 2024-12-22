@@ -1,0 +1,49 @@
+django_project/
+├── pyproject.toml
+├── manage.py
+├── config/
+│   ├── __init__.py
+│   ├── settings/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── local.py
+│   │   └── production.py
+│   ├── urls.py
+│   └── wsgi.py
+├── apps/
+│   ├── __init__.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   └── utils/
+│   ├── file_management/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── services.py
+│   │   ├── serializers.py
+│   │   └── views.py
+│   ├── parameter_processing/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── services.py
+│   │   └── views.py
+│   ├── com_simulation/
+│   │   ├── __init__.py
+│   │   ├── apps.py
+│   │   ├── models.py
+│   │   ├── services.py
+│   │   └── views.py
+│   └── server_simulation/
+│       ├── __init__.py
+│       ├── apps.py
+│       ├── models.py
+│       ├── services.py
+│       └── views.py
+├── static/
+├── templates/
+└── tests/
+    ├── __init__.py
+    ├── conftest.py
+    └── test_apps/ 
